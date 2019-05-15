@@ -1,0 +1,177 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+
+
+
+# Switch off showing code...
+knitr::opts_chunk$set(echo=FALSE)
+
+# Function to to column of data where each entry can have 
+# more than one piece of text separated by a comma
+# and return a vector with all the terms
+collectTerms <- function(entries){
+  unlist(strsplit(entries,"[,]")) -> r
+  
+  # Strings may have a leading space which we'll remove
+  roles <- sapply(r,function(s){
+    l <- unlist(strsplit(s,"^ "))
+    if ( length(l) == 1 ){
+      return(l)
+    }
+    else{
+      return(l[length(l)])
+    }
+  })
+  return(as.vector(roles))
+}
+
+
+# Function to remove blank entries from a column
+# and then print them out nicely
+printComments <- function(entries,label=NULL){
+  r <- sapply(entries,function(e){
+    if ( e == ""){
+      NULL
+    }
+    else { e }
+ })
+  text_tbl <- data.frame(x=as.vector(unlist(r)))
+  names(text_tbl) <- label
+                        
+  kable(text_tbl) %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, width = "30em", background = "khaki")
+#  kable(as.vector(unlist(r)),label=label)
+}
+
+# Convert columns of data on individual themes and recast it
+# as a single vector
+turnIntoOneColumn <- function(data,cols){
+  colNames <- names(data)[cols]
+  nRows <- dim(data)[1]
+  labels <- rep(colNames,each=nRows)
+  results <- c()
+  for ( label in colNames ){
+    results <- c(results,data[,label])
+  }
+  return(data.frame(theme=labels,score=results))
+}
+
+# Remove rows where the theme scores have zero variance
+removeZeroVarRows <- function(data,cols){
+  nRows <- dim(data)[1]
+  keep <- c()
+  for ( i in 1:nRows ){
+    if (var(as.numeric(data[i,cols])) > 1e-6){
+      keep <- c(keep,i)
+    }
+  }
+  return(data[keep,])
+}
+
+survey <- read.csv("Questionnaire.csv",stringsAsFactors=FALSE)
+```
+
+**Roughly half of people attending the meeting submitted to this...**
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+ggplot(data=survey,aes(x=Attending)) + geom_bar() + scale_y_continuous(breaks=c(2,4,6,8,10))
+```
+
+**A small number are representing their organisation's opionions**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+ggplot(data=survey,aes(x=Organisation)) + geom_bar() + scale_y_continuous(breaks=c(2,4,6,8,10))
+```
+
+**There is a wide spread of roles**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+x <- data.frame(roles=collectTerms(survey$Role))
+ggplot(data=x,aes(x=roles)) + geom_histogram(stat="count") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+printComments(survey$OtherRoles,"Other possible role descriptions")
+```
+
+**There is a wide spread of domains**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+x <- data.frame(ResearchDomains=collectTerms(survey$ResearchDomain))
+ggplot(data=x,aes(x=ResearchDomains)) + geom_histogram(stat="count") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+printComments(survey$OtherResearchDomain,"Other research domains")
+```
+
+**General agreement that Search for Course Materials is a valid use case.**
+The negative comments are below...
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+ggplot(data=survey,aes(x=CourseMaterialsSearch)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+printComments(survey$CourseMaterialsSearchReasonNo,"Reasons why this isn't a valid use case")
+```
+**..and also general agreement that Curriculum design is a valid use case.**
+The negative comments are below...
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+ggplot(data=survey,aes(x=CurriculumDesign)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+printComments(survey$CurriculumDesignReasonsNo,"Reasons why this isn't a valid use case")
+```
+
+**But much less support for the other cases**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+ggplot(data=survey,aes(x=FAIRJobAssessment)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(data=survey,aes(x=ArticleQualityControl)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(data=survey,aes(x=DataRepositoryUploaderSkillsCheck)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+printComments(survey$ReasonsNo,"Reasons why this isn't a valid use case")
+```
+
+
+**Many interesting suggestions for other use cases - but no real consensus there**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+printComments(survey$OtherUseCases,"Other possible use case")
+```
+
+**Use cases that would be used reflects the above**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+x <- data.frame(UseCasesEmployed=collectTerms(survey$UseCasesWouldEmploy))
+ggplot(data=x,aes(x=UseCasesEmployed)) + geom_histogram(stat="count") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+**Thesaurus is favoured**
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+ggplot(data=survey,aes(x=TerminologySelection)) + geom_histogram(stat="count") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#printComments(survey$ExplanationTerminologySection)
+printComments(survey[which(survey$TerminologySelection=="Controlled Vocabulary"),"ExplanationTerminologySection"],"Reasons for choosing Controlled Vocabulary")
+
+printComments(survey[which(survey$TerminologySelection=="Ontology"),"ExplanationTerminologySection"],"Reasons for choosing Ontology")
+
+printComments(survey[which(survey$TerminologySelection=="Thesaurus"),"ExplanationTerminologySection"],"Reasons for choosing Thesearus")
+```
+
+
+**Overall people seem okay with the top concepts (Scope and Resource)**
+```{r echo=FALSE, message=TRUE, warning=FALSE}
+scoreData <- turnIntoOneColumn(survey,c(21:29))
+ggplot(data=scoreData,aes(x=theme,y=score)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(breaks=c(1:10))
+
+# highVarData <- removeZeroVarRows(survey,c(21:29))
+# ggplot(data=turnIntoOneColumn(highVarData,c(21:29)),aes(x=theme,y=score)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(breaks=c(1:10))
+# 
+# ggplot(data=turnIntoOneColumn(survey[which(survey$Attending=="Yes"),c(21:29)]),aes(x=theme,y=score)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(breaks=c(1:10))
+printComments(survey$OtherTopLevelConcepts,"Other possible top level concepts")
+```
+
