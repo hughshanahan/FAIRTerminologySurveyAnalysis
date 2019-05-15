@@ -78,7 +78,7 @@ removeZeroVarRows <- function(data,cols){
 
 survey <- read.csv("Questionnaire.csv",stringsAsFactors=FALSE)
 ```
-
+ 
 **Roughly half of people attending the meeting submitted to this...**
 
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
