@@ -79,7 +79,7 @@ removeZeroVarRows <- function(data,cols){
 survey <- read.csv("Questionnaire.csv",stringsAsFactors=FALSE)
 ```
  
-**Roughly half of people attending the meeting submitted to this...**
+**Roughly 2/3 of people submitted to this are attending the meeting...**
 
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
 ggplot(data=survey,aes(x=Attending)) + geom_bar() + scale_y_continuous(breaks=c(2,4,6,8,10))
