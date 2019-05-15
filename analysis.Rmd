@@ -1,6 +1,5 @@
 ---
 output:
-  pdf_document: default
   html_document: default
 ---
 
@@ -48,7 +47,7 @@ printComments <- function(entries,label=NULL){
                         
   kable(text_tbl) %>%
   kable_styling(full_width = F) %>%
-  column_spec(1, width = "30em", background = "khaki")
+  column_spec(1, width = "30em",background="khaki")
 #  kable(as.vector(unlist(r)),label=label)
 }
 
@@ -81,6 +80,7 @@ survey <- read.csv("Questionnaire.csv",stringsAsFactors=FALSE)
 ```
 
 **Roughly half of people attending the meeting submitted to this...**
+
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
 ggplot(data=survey,aes(x=Attending)) + geom_bar() + scale_y_continuous(breaks=c(2,4,6,8,10))
 ```
@@ -101,6 +101,7 @@ ggplot(data=x,aes(x=roles)) + geom_histogram(stat="count") + theme(axis.text.x =
 printComments(survey$OtherRoles,"Other possible role descriptions")
 ```
 
+
 **There is a wide spread of domains**
 
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
@@ -112,6 +113,7 @@ ggplot(data=x,aes(x=ResearchDomains)) + geom_histogram(stat="count") + theme(axi
 printComments(survey$OtherResearchDomain,"Other research domains")
 ```
 
+
 **General agreement that Search for Course Materials is a valid use case.**
 The negative comments are below...
 
@@ -119,6 +121,8 @@ The negative comments are below...
 ggplot(data=survey,aes(x=CourseMaterialsSearch)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 printComments(survey$CourseMaterialsSearchReasonNo,"Reasons why this isn't a valid use case")
 ```
+
+
 **..and also general agreement that Curriculum design is a valid use case.**
 The negative comments are below...
 
@@ -126,6 +130,7 @@ The negative comments are below...
 ggplot(data=survey,aes(x=CurriculumDesign)) + geom_bar() + scale_y_continuous(breaks=c(4,8,12,16,20)) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 printComments(survey$CurriculumDesignReasonsNo,"Reasons why this isn't a valid use case")
 ```
+
 
 **But much less support for the other cases**
 
@@ -143,12 +148,14 @@ printComments(survey$ReasonsNo,"Reasons why this isn't a valid use case")
 printComments(survey$OtherUseCases,"Other possible use case")
 ```
 
+
 **Use cases that would be used reflects the above**
 
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
 x <- data.frame(UseCasesEmployed=collectTerms(survey$UseCasesWouldEmploy))
 ggplot(data=x,aes(x=UseCasesEmployed)) + geom_histogram(stat="count") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+
 
 **Thesaurus is favoured**
 
@@ -161,6 +168,7 @@ printComments(survey[which(survey$TerminologySelection=="Ontology"),"Explanation
 
 printComments(survey[which(survey$TerminologySelection=="Thesaurus"),"ExplanationTerminologySection"],"Reasons for choosing Thesearus")
 ```
+
 
 
 **Overall people seem okay with the top concepts (Scope and Resource)**
