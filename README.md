@@ -8,3 +8,5 @@ It's all written in R so apologies if you were expecting it all in Python...
 The HTML version of the report can be inspected going to
 http://htmlpreview.github.io/?https://github.com/hughshanahan/FAIRTerminologySurveyAnalysis/blob/master/analysis.html
 
+A presentation on the report can be found at 
+http://htmlpreview.github.io/?https://github.com/hughshanahan/FAIRTerminologySurveyAnalysis/blob/master/analysis.html
