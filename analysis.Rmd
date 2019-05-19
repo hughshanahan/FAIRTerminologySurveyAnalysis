@@ -1,6 +1,7 @@
 ---
-output:
+output: 
   html_document: default
+  
 ---
 
 ```{r echo=FALSE, message=TRUE, warning=FALSE}
